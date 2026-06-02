@@ -195,8 +195,40 @@ public class TelaReplicacaoProcessoView extends JFrame {
         });
 
         btnBuscar.addActionListener(e -> {
-            
-            modoTela = ModoTela.UPDATE;
+
+            try {
+
+                ConsultaProcessoDialog dlg = new ConsultaProcessoDialog(this,dao);
+
+                dlg.setVisible(true);
+
+                TB_REPLICACAO_PROCESSO selecionado = dlg.getSelecionado();
+
+                if(selecionado == null) return;
+
+
+                modoTela = ModoTela.UPDATE;
+
+
+                txfId.setText(String.valueOf(selecionado.getId()));
+                txfProcesso.setText(selecionado.getProcesso());
+                txfDescricao.setText(selecionado.getDescricao());
+                chkHabilitado.setSelected(selecionado.isHabilitado());
+
+
+                txfProcesso.setEnabled(true);
+                txfDescricao.setEnabled(true);
+                chkHabilitado.setEnabled(true);
+                btnSalvar.setEnabled(true);
+                btnExcluir.setEnabled(true);
+
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro ao consultar registro: "+ex.getMessage());
+            }
+
+
 
         });
 

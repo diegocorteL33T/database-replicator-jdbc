@@ -1,11 +1,20 @@
 package view;
 
+import database.dao.DirecaoDAO;
 import database.model.TB_REPLICACAO_DIRECAO;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class TelaReplicacaoDirecaoView extends JFrame{
+
+    private enum ModoTela{NENHUM, INSERT, UPDATE}
+    private TelaReplicacaoDirecaoView.ModoTela modoTela = TelaReplicacaoDirecaoView.ModoTela.NENHUM;
+
+    private final Connection conn;
+    private final DirecaoDAO dao;
 
     private JTextField txfId;
     private JComboBox<TB_REPLICACAO_DIRECAO> cmbProcesso;
@@ -23,7 +32,17 @@ public class TelaReplicacaoDirecaoView extends JFrame{
     private JButton btnBuscar;
     private JButton btnExcluir;
 
-    public TelaReplicacaoDirecaoView(){
+    public TelaReplicacaoDirecaoView() throws SQLException {
+        this(null, null);
+    }
+
+    public TelaReplicacaoDirecaoView(Connection conn) throws SQLException {
+        this(conn, null);
+    }
+
+    public TelaReplicacaoDirecaoView(Connection conn, DirecaoDAO dao) throws SQLException {
+        this.conn = conn;
+        this.dao = dao != null ? dao : (conn != null ? new DirecaoDAO(conn) : null);
         setTitle("Cadastro de direcoes");
         setSize(760, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -128,7 +147,12 @@ public class TelaReplicacaoDirecaoView extends JFrame{
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(()-> new TelaReplicacaoDirecaoView().setVisible(true));
+        SwingUtilities.invokeLater(()-> {
+            try {
+                new TelaReplicacaoDirecaoView().setVisible(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
-
 }
